@@ -29,7 +29,7 @@ assert_redirect_with() {
 }
 
 assert_redirect() {
-    if [ "$http_code" = "300" ] && [ "$destination_path" = "$redirect_url" ] && [ "$destination_path" = "$url_effective" ]; then
+    if [ "$http_code" = "300" ]; then
         return 0
     elif [ "$http_code" = "301" ] && [ "$destination_path" = "$redirect_url" ] && [ "$destination_path" = "$url_effective" ]; then
         return 0
