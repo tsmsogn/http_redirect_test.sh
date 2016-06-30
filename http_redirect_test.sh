@@ -24,6 +24,10 @@ assert_be_ok() {
     assert_same $1 "200"
 }
 
+assert_be_multiple_choices() {
+    assert_same $1 "300"
+}
+
 assert_redirect_with() {
     if [ "$http_code" = $1 ] && [ "$destination_path" = "$redirect_url" ] && [ "$destination_path" = "$url_effective" ]; then
         return 0
@@ -119,13 +123,16 @@ main() {
         "200")
             assert_be_ok $http_code && exit 0
             ;;
+        "300")
+            assert_be_multiple_choices $http_code && exit 0
+            ;;
         "404")
             assert_not_be_found $http_code && exit 0
             ;;
         "410")
             assert_be_gone $http_code && exit 0
             ;;
-        "300"|"301"|"302"|"303")
+        "301"|"302"|"303")
             assert_redirect_with $status && exit 0
             ;;
         "")
