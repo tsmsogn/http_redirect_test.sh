@@ -12,12 +12,16 @@ EOL
     exit 1
 }
 
-assert_not_redirect() {
-    if [ "$http_code" = "200" ]; then
-        return 0
+assert_same() {
+    if [ "$1" = "$2" ]; then
+        return 0;
     fi
 
     return 1
+}
+
+assert_be_ok() {
+    assert_same $1 "200"
 }
 
 assert_redirect_with() {
@@ -43,19 +47,11 @@ assert_redirect() {
 }
 
 assert_not_be_found() {
-    if [ "$http_code" = "404" ]; then
-        return 0
-    fi
-
-    return 1
+    assert_same $1 "404"
 }
 
 assert_be_gone() {
-    if [ "$http_code" = "410" ]; then
-        return 0
-    fi
-
-    return 1
+    assert_same $1 "410"
 }
 
 fetch() {
@@ -121,13 +117,13 @@ main() {
 
     case "$status" in
         "200")
-            assert_not_redirect && exit 0
+            assert_be_ok $http_code && exit 0
             ;;
         "404")
-            assert_not_be_found && exit 0
+            assert_not_be_found $http_code && exit 0
             ;;
         "410")
-            assert_be_gone && exit 0
+            assert_be_gone $http_code && exit 0
             ;;
         "300"|"301"|"302"|"303")
             assert_redirect_with $status && exit 0
