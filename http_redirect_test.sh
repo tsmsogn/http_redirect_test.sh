@@ -7,6 +7,7 @@ USAGE: $(basename $0) [OPTIONS...] source_path destination_path
 OPTIONS:
   -h, --help
   --status
+  --debug
 EOL
     exit 1
 }
@@ -70,6 +71,7 @@ fetch() {
 
 main() {
     status=""
+    debug=false
     local argc=0
     local argv=()
 
@@ -81,6 +83,9 @@ main() {
             --status)
                 status=$2
                 shift
+                ;;
+            --debug)
+                debug=true
                 ;;
             *)
                 argc=`expr $argc + 1`
@@ -100,6 +105,12 @@ main() {
     destination_path=${argv[1]}
 
     fetch
+
+    if [ $debug ]; then
+        echo "---> $source_path"
+        echo "Expected: status: $status url: $destination_path"
+        echo "Actual: status: $http_code, url_effective: $url_effective, redirect_url: $redirect_url"
+    fi
 
     case "$status" in
         "200")
