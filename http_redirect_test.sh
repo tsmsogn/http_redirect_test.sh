@@ -28,7 +28,7 @@ assert_be_multiple_choices() {
     assert_same $1 "300"
 }
 
-assert_redirect_with() {
+assert_redirect() {
     if [ "$http_code" = $1 ] && [ "$destination_path" = "$redirect_url" ] && [ "$destination_path" = "$url_effective" ]; then
         return 0
     fi
@@ -36,7 +36,7 @@ assert_redirect_with() {
     return 1
 }
 
-assert_redirect() {
+assert_fuzzy_redirect() {
     if [ "$http_code" = "300" ]; then
         return 0
     elif [ "$http_code" = "301" ] && [ "$destination_path" = "$redirect_url" ] && [ "$destination_path" = "$url_effective" ]; then
@@ -133,10 +133,10 @@ main() {
             assert_be_gone $http_code && exit 0
             ;;
         "301"|"302"|"303")
-            assert_redirect_with $status && exit 0
+            assert_redirect $status && exit 0
             ;;
         "")
-            assert_redirect && exit 0
+            assert_fuzzy_redirect && exit 0
             ;;
         *)
             ;;
