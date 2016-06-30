@@ -91,7 +91,7 @@ main() {
 
     fetch
 
-    if [ $debug ]; then
+    if $debug; then
         echo "---> $source_path"
         echo "Expected: status: $status url: $destination_path"
         echo "Actual: status: $http_code, url_effective: $url_effective, redirect_url: $redirect_url"

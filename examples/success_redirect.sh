@@ -15,7 +15,7 @@ do
     source=`echo $source_destination | cut -f1 -d" "`
     destination=`echo $source_destination | cut -f2 -d" "`
 
-    $base/../http_redirect_test.sh $source $destination --debug
+    $base/../http_redirect_test.sh $source $destination
 
     case $? in
         0)
