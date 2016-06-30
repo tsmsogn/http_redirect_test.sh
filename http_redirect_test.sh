@@ -28,20 +28,6 @@ assert_be_multiple_choices() {
     assert_same $1 "300"
 }
 
-assert_fuzzy_redirect() {
-    if [ "$http_code" = "300" ]; then
-        return 0
-    elif [ "$http_code" = "301" ] && [ "$destination_path" = "$redirect_url" ] && [ "$destination_path" = "$url_effective" ]; then
-        return 0
-    elif [ "$http_code" = "302" ] && [ "$destination_path" = "$redirect_url" ] && [ "$destination_path" = "$url_effective" ]; then
-        return 0
-    elif [ "$http_code" = "303" ] && [ "$destination_path" = "$redirect_url" ] && [ "$destination_path" = "$url_effective" ]; then
-        return 0
-    fi
-
-    return 1
-}
-
 assert_not_be_found() {
     assert_same $1 "404"
 }
@@ -131,7 +117,18 @@ main() {
             && exit 0
             ;;
         "")
-            assert_fuzzy_redirect && exit 0
+            case "$http_code" in
+                "300")
+                    exit 0
+                    ;;
+                "301"|"302"|"303")
+                    assert_same $destination_path $redirect_url \
+                    && assert_same $destination_path $url_effective \
+                    && exit 0
+                    ;;
+                *)
+                    ;;
+            esac
             ;;
         *)
             ;;
