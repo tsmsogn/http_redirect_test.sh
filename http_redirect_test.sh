@@ -66,7 +66,14 @@ fetch() {
     redirect_url=`echo "$curl_out_non_redirect" | cut -f2`
     url_effective=`echo "$curl_out_redirect" | cut -f1`
 
+    redirect_url=`remove_trailing_slash $redirect_url`
+    url_effective=`remove_trailing_slash $url_effective`
+
     return 0
+}
+
+remove_trailing_slash() {
+    echo ${1%/}
 }
 
 main() {
