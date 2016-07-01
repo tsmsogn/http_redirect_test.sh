@@ -7,6 +7,7 @@ USAGE: $(basename $0) [OPTIONS...] source_path destination_path
 OPTIONS:
   -h, --help
   --status
+  --remove Remove trailing slash from response urls
   --debug
 EOL
     exit 1
@@ -44,9 +45,6 @@ fetch() {
     redirect_url=`echo "$curl_out_non_redirect" | cut -f2`
     url_effective=`echo "$curl_out_redirect" | cut -f1`
 
-    redirect_url=`remove_trailing_slash $redirect_url`
-    url_effective=`remove_trailing_slash $url_effective`
-
     return 0
 }
 
@@ -56,6 +54,7 @@ remove_trailing_slash() {
 
 main() {
     status=""
+    remove=false
     debug=false
     local argc=0
     local argv=()
@@ -68,6 +67,9 @@ main() {
             --status)
                 status=$2
                 shift
+                ;;
+            --remove)
+                remove=true
                 ;;
             --debug)
                 debug=true
@@ -90,6 +92,11 @@ main() {
     destination_path=${argv[1]}
 
     fetch
+
+    if $remove; then
+        redirect_url=`remove_trailing_slash $redirect_url`
+        url_effective=`remove_trailing_slash $url_effective`
+    fi
 
     if $debug; then
         echo "---> $source_path"

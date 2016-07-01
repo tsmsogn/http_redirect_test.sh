@@ -19,7 +19,7 @@ do
     status=`echo $source_status_destination | cut -f2 -d" "`
     destination=`echo $source_status_destination | cut -f3 -d" "`
 
-    $base/../http_redirect_test.sh $source $destination --status $status --debug
+    $base/../http_redirect_test.sh $source $destination --status $status --debug --remove
 
     case $? in
         0)
