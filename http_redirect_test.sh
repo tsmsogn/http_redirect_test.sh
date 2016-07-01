@@ -38,12 +38,18 @@ assert_be_gone() {
 }
 
 fetch() {
-    curl_out_non_redirect=`curl -s -w "%{http_code}\t%{redirect_url}" -o /dev/null $source_path`
-    curl_out_redirect=`curl -sL -w "%{url_effective}" -o /dev/null $source_path`
+    case "$1" in
+        ""|"301"|"302"|"303")
+            curl_out_non_redirect=`curl -s -w "%{http_code}" -o /dev/null $source_path`
+            curl_out_redirect=`curl -sL -w "%{url_effective}" -o /dev/null $source_path`
+            ;;
+        *)
+            curl_out_non_redirect=`curl -s -w "%{http_code}" -o /dev/null $source_path`
+            ;;
+    esac
 
-    http_code=`echo "$curl_out_non_redirect" | cut -f1`
-    redirect_url=`echo "$curl_out_non_redirect" | cut -f2`
-    url_effective=`echo "$curl_out_redirect" | cut -f1`
+    http_code=`echo "$curl_out_non_redirect"`
+    url_effective=`echo "$curl_out_redirect"`
 
     return 0
 }
@@ -91,17 +97,16 @@ main() {
     source_path=${argv[0]}
     destination_path=${argv[1]}
 
-    fetch
+    fetch $status
 
     if $remove; then
-        redirect_url=`remove_trailing_slash $redirect_url`
         url_effective=`remove_trailing_slash $url_effective`
     fi
 
     if $debug; then
         echo "---> $source_path"
         echo "Expected: status: $status url: $destination_path"
-        echo "Actual: status: $http_code, url_effective: $url_effective, redirect_url: $redirect_url"
+        echo "Actual: status: $http_code, url: $url_effective"
     fi
 
     case "$status" in
@@ -119,7 +124,6 @@ main() {
             ;;
         "301"|"302"|"303")
             assert_same $status $http_code \
-            && assert_same $destination_path $redirect_url \
             && assert_same $destination_path $url_effective \
             && exit 0
             ;;
@@ -129,8 +133,7 @@ main() {
                     exit 0
                     ;;
                 "301"|"302"|"303")
-                    assert_same $destination_path $redirect_url \
-                    && assert_same $destination_path $url_effective \
+                    assert_same $destination_path $url_effective \
                     && exit 0
                     ;;
                 *)
