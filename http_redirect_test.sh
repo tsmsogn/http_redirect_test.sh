@@ -9,6 +9,7 @@ OPTIONS:
   --status
   --remove Remove trailing slash from response urls
   --debug
+  --
 EOL
     exit 1
 }
@@ -40,11 +41,11 @@ assert_be_gone() {
 fetch() {
     case "$1" in
         ""|"301"|"302"|"303")
-            curl_out_non_redirect=`curl -s -w "%{http_code}" -o /dev/null $source_path`
-            curl_out_redirect=`curl -sL -w "%{url_effective}" -o /dev/null $source_path`
+            curl_out_non_redirect=`curl -s -w "%{http_code}" -o /dev/null $source_path $args`
+            curl_out_redirect=`curl -sL -w "%{url_effective}" -o /dev/null $source_path $args`
             ;;
         *)
-            curl_out_non_redirect=`curl -s -w "%{http_code}" -o /dev/null $source_path`
+            curl_out_non_redirect=`curl -s -w "%{http_code}" -o /dev/null $source_path $args`
             ;;
     esac
 
@@ -62,6 +63,7 @@ main() {
     status=""
     remove=false
     debug=false
+    args=""
     local argc=0
     local argv=()
 
@@ -79,6 +81,10 @@ main() {
                 ;;
             --debug)
                 debug=true
+                ;;
+            --)
+                shift
+                args=$*
                 ;;
             *)
                 argc=`expr $argc + 1`
