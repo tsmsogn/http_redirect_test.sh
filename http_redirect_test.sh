@@ -15,11 +15,7 @@ EOL
 }
 
 assert_same() {
-    if [ "$1" = "$2" ]; then
-        return 0;
-    fi
-
-    return 1
+    [ "$1" = "$2" ]
 }
 
 assert_be_ok() {
