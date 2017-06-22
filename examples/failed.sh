@@ -3,7 +3,7 @@
 cd $(dirname $0)
 base=$(pwd)
 
-succeeded=0
+ok=0
 failed=0
 
 for source_status_destination in \
@@ -21,7 +21,7 @@ do
 
     case $? in
         0)
-            succeeded=`expr $succeeded + 1`
+            ok=`expr $ok + 1`
             ;;
         *)
             failed=`expr $failed + 1`
@@ -29,4 +29,4 @@ do
     esac
 done
 
-echo "succeeded: $succeeded, failed: $failed"
+echo "ok: $ok, failed: $failed"
