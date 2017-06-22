@@ -47,8 +47,6 @@ fetch() {
 
     http_code=`echo "$curl_out_non_redirect"`
     url_effective=`echo "$curl_out_redirect"`
-
-    return 0
 }
 
 remove_trailing_slash() {
