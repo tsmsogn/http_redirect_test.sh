@@ -7,7 +7,7 @@ Shell script for testing HTTP redirect
 ### Tests 200
 
 ```
-% ./http_redirect_test.sh --status 200 http://httpstat.us/200
+% http_redirect_test.sh --status 200 http://httpstat.us/200
 % echo $?
 0
 ```
